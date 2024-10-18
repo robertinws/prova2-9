@@ -1,6 +1,8 @@
 package com.example.prova29;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +35,7 @@ public class TelaMaterias extends AppCompatActivity {
 
     private ActivityTelaMateriasBinding view;
     private List<Disciplinas> list = new ArrayList<>();
+    private boolean very = false;
 
     private interface Lista {
 
@@ -69,6 +72,38 @@ public class TelaMaterias extends AppCompatActivity {
         Lista lista = retrofit.create(Lista.class);
 
         SharedPreferences cache = getSharedPreferences("login", MODE_PRIVATE);
+
+        very = cache.getBoolean("mostrarPop", false);
+
+        if (!very) {
+
+            AlertDialog.Builder pop = new AlertDialog.Builder(TelaMaterias.this);
+            pop.setTitle("Permissão de biometria");
+            pop.setMessage("Aceita usar a biometria como validação de login?");
+            pop.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    SharedPreferences.Editor editor = getSharedPreferences("login", MODE_PRIVATE).edit();
+                    editor.putBoolean("mostrarPop", true);
+                    editor.apply();
+
+                }
+            });
+            pop.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    SharedPreferences.Editor editor = getSharedPreferences("login", MODE_PRIVATE).edit();
+                    editor.putBoolean("mostrarPop", true);
+                    editor.putBoolean("permissao", true);
+                    editor.apply();
+
+                }
+            });
+            pop.create().show();
+
+        }
 
         int id = cache.getInt("id", 0);
 
