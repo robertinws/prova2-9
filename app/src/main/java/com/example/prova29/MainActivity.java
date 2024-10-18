@@ -8,12 +8,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prova29.databinding.ActivityMainBinding;
+
+import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +31,9 @@ import retrofit2.http.Query;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding view;
+    private boolean very = false, very2 = false;
+    private BiometricPrompt biometric;
+    private int cont = 0;
 
     private interface Login {
 
@@ -47,8 +55,66 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:3000").addConverterFactory(GsonConverterFactory.create()).build();
-
         Login login = retrofit.create(Login.class);
+
+        SharedPreferences cache = getSharedPreferences("login", MODE_PRIVATE);
+
+        very = cache.getBoolean("logado", false);
+        very2 = cache.getBoolean("permissao", false);
+
+        if (very && very2) {
+
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Validação Biométrica")
+                    .setDescription("Confirme a autenticação no aplicativo")
+                    .setNegativeButtonText("Cancelar")
+                    .build();
+
+            Executor executor = ContextCompat.getMainExecutor(MainActivity.this);
+
+            biometric = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+
+
+
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+
+                    SharedPreferences.Editor editor = getSharedPreferences("login", MODE_PRIVATE).edit();
+                    editor.putBoolean("logado", true);
+                    editor.putBoolean("logadoCampos", false);
+                    editor.apply();
+
+                    startActivity(new Intent(MainActivity.this, TelaMaterias.class));
+                    finish();
+
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+
+                    cont++;
+
+                    if (cont >= 3) {
+
+                        biometric.cancelAuthentication();
+                        Toast.makeText(MainActivity.this, "Faça login com e-mail e senha!", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            });
+
+            biometric.authenticate(promptInfo);
+
+        }
+
 
         view.btnEntrar.setOnClickListener(e -> {
 
