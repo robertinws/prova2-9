@@ -59,6 +59,7 @@
         android:elevation="4dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/viewMenu"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintWidth_percent="0.7"
