@@ -58,15 +58,14 @@ public class TelaMaterias extends AppCompatActivity {
             return insets;
         });
 
-        view.recyclerView.setLayoutManager(new LinearLayoutManager(TelaMaterias.this));
-        view.recyclerView.setHasFixedSize(true);
-
         Animation animation = new AlphaAnimation(1, 0);
-        animation.setDuration(2000);
+        animation.setDuration(5000);
 
         view.viewHarmonico.setAnimation(animation);
         view.viewHarmonico.setVisibility(View.GONE);
 
+        view.recyclerView.setLayoutManager(new LinearLayoutManager(TelaMaterias.this));
+        view.recyclerView.setHasFixedSize(true);
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:3000").addConverterFactory(GsonConverterFactory.create()).build();
