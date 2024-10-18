@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -135,6 +136,48 @@ public class TelaMaterias extends AppCompatActivity {
                 Log.e("ERROR", "Error: " + throwable.getMessage());
 
             }
+        });
+
+        view.imgMenu.setOnClickListener(e -> {
+
+            view.imgMenu.setEnabled(false);
+            view.viewFundo.setEnabled(true);
+
+            Animation animation1 = new AlphaAnimation(0, 1);
+            animation1.setDuration(500);
+
+            view.viewFundo.setAnimation(animation1);
+            view.viewFundo.setVisibility(View.VISIBLE);
+
+            Animation animation2 = AnimationUtils.loadAnimation(TelaMaterias.this, R.anim.anim_in);
+            animation2.setDuration(500);
+
+            view.viewMenu.setAnimation(animation2);
+            view.viewMenu.setVisibility(View.VISIBLE);
+
+        });
+
+        view.viewFundo.setOnClickListener(e -> {
+
+            view.imgMenu.setEnabled(true);
+            view.viewFundo.setEnabled(false);
+
+            Animation animation1 = new AlphaAnimation(1, 0);
+            animation1.setDuration(500);
+
+            view.viewFundo.setAnimation(animation1);
+            view.viewFundo.setVisibility(View.GONE);
+
+            Animation animation2 = AnimationUtils.loadAnimation(TelaMaterias.this, R.anim.anim_out);
+            animation2.setDuration(500);
+
+            view.viewMenu.setAnimation(animation2);
+            view.viewMenu.setVisibility(View.GONE);
+
+        });
+
+        view.viewMenu.setOnClickListener(e -> {
+
         });
 
     }
